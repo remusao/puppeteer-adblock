@@ -61,6 +61,9 @@ async function loadAdblocker() {
   // NOTE: we could also perform cosmetic injection using `page.addScriptTag`
   // and `page.addStyleTag`. Ideally all of this could be hidden behind a
   // `PuppeteerEngine` abstraction (similar to `WebExtensionEngine`.)
+  //
+  // We could also perform the CSP headers injection using the `request.respond`
+  // method, which allows to inject custom headers.
 
   await page.goto("https://www.mangareader.net/");
 })();
