@@ -1,87 +1,62 @@
-const puppeteer = require('puppeteer');
-const fetch =  require('isomorphic-unfetch')
-const { parse } =  require('tldts')
-const { makeRequest, fastHash, FiltersEngine, fetchLists, fetchResources } = require('@cliqz/adblocker')
+const puppeteer = require("puppeteer");
+const fetch = require("isomorphic-unfetch");
+const { Request, ENGINE_VERSION, FiltersEngine } = require("@cliqz/adblocker");
 
-function loadAdblocker() {
-  console.log('Fetching resources...');
-  return Promise.all([fetchLists(), fetchResources()]).then(([responses, resources]) => {
-    console.log('Initialize adblocker...');
-    const deduplicatedLines = new Set();
-    for (let i = 0; i < responses.length; i += 1) {
-      const lines = responses[i].split(/\n/g);
-      for (let j = 0; j < lines.length; j += 1) {
-        deduplicatedLines.add(lines[j]);
-      }
-    }
-    const deduplicatedFilters = [...deduplicatedLines].join('\n');
+async function loadAdblocker() {
+  // Fetch `allowed-lists.json` from CDN. It contains information about where
+  // to find pre-built engines as well as lists of filters (e.g.: Easylist,
+  // etc.).
+  console.time("fetch allowed lists");
+  const { engines } = await (await fetch(
+    "https://cdn.cliqz.com/adblocker/configs/desktop-ads-trackers/allowed-lists.json"
+  )).json();
+  console.timeEnd("fetch allowed lists");
 
-    let t0 = Date.now();
-    const engine = FiltersEngine.parse(deduplicatedFilters);
-    let total = Date.now() - t0;
-    console.log('parsing filters', total);
+  // Once we have the config, we can get the URL of the pre-built engine
+  // corresponding to our installed @cliqz/adblocker version (i.e.:
+  // ENGINE_VERSION). This guarantees that we can download a compabitle one.
+  console.time("fetch serialized engine");
+  const serialized = await (await fetch(
+    engines[ENGINE_VERSION].url
+  )).arrayBuffer();
+  console.timeEnd("fetch serialized engine");
 
-    t0 = Date.now();
-    engine.updateResources(resources, '' + fastHash(resources));
-    total = Date.now() - t0;
-    console.log('parsing resources', total);
+  // Deserialize the FiltersEngine instance from binary form.
+  console.time("deserialize engine");
+  const engine = FiltersEngine.deserialize(new Uint8Array(serialized));
+  console.timeEnd("deserialize engine");
 
-    t0 = Date.now();
-    const serialized = engine.serialize();
-    total = Date.now() - t0;
-    console.log('serialization', total);
-    console.log('size', serialized.byteLength);
-
-    t0 = Date.now();
-    const deserialized = FiltersEngine.deserialize(serialized);
-    total = Date.now() - t0;
-    console.log('deserialization', total);
-
-    return deserialized;
-  });
+  return engine;
 }
 
-
 (async () => {
-
-
-  const engine = await loadAdblocker()
-
-  const browser = await puppeteer.launch({ 
-        headless: false, 
-        devtools: false
-    });
-  
-  const page = await browser.newPage();
-    
-  await page.setRequestInterception(true);
-  
- 
-  page.on('request', interceptedRequest => {
-
-      const { redirect, match } = engine.match(makeRequest(
-          {
-            sourceUrl: interceptedRequest.url(),
-            type: interceptedRequest.resourceType(),
-            url: interceptedRequest.url()
-          },
-          parse
-        ));
-
-      if(redirect){
-        console.log('ABORT REDIRECT')
-        interceptedRequest.abort()
-      } else if(match){
-        console.log('ABORT MATCH')
-        interceptedRequest.abort()
-      } else {
-        interceptedRequest.continue();
-      }
-
-      
+  const engine = await loadAdblocker();
+  const browser = await puppeteer.launch({
+    headless: false,
+    devtools: false
   });
 
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
 
-   await page.goto('https://www.nytimes.com/')
+  page.on("request", request => {
+    const { redirect, match } = engine.match(
+      Request.fromPuppeteerDetails(request)
+    );
 
-})()
+    if (redirect) {
+      console.log("ABORT REDIRECT");
+      // NOTE - here we could use `request.respond` instead but this would
+      // require `engine.match` to return more details than just `redirect`
+      // (which is a data:url). Instead we would need `contentType` and `body`.
+      request.abort("blockedbyclient");
+    } else if (match) {
+      console.log("ABORT MATCH");
+      request.abort("blockedbyclient");
+    } else {
+      request.continue();
+    }
+  });
+
+  await page.goto("https://www.nytimes.com/");
+})();

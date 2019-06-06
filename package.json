@@ -10,7 +10,6 @@
   "dependencies": {
     "@cliqz/adblocker": "^0.10.0",
     "isomorphic-unfetch": "^3.0.0",
-    "puppeteer": "^1.17.0",
-    "tldts": "^5.0.3"
+    "puppeteer": "^1.17.0"
   }
 }
