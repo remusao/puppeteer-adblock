@@ -2,11 +2,14 @@
 # yarn lockfile v1
 
 
-"@cliqz/adblocker@^0.9.1":
-  version "0.9.1"
-  resolved "https://registry.yarnpkg.com/@cliqz/adblocker/-/adblocker-0.9.1.tgz#e004cc98906a5a9ec9e713bb1a97d8ee87d9d9dc"
+"@cliqz/adblocker@^0.10.0":
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/@cliqz/adblocker/-/adblocker-0.10.0.tgz#e46911c49dbe6b255e72a71e828eb46f7416ae11"
+  integrity sha512-+0Pl4CzzZW21FxJ1AJSi3X6H6ZaQMZHol+Za9yH32kG2LZjoduMCoXNmm8e1r5wrZs/FWsZyj3UPo7JsOrW5oA==
   dependencies:
+    tldts "^5.0.3"
     tslib "^1.9.3"
+    tsmaz "^1.2.1"
 
 agent-base@^4.1.0:
   version "4.2.1"
@@ -244,9 +247,19 @@ tldts@^5.0.2:
   resolved "https://registry.yarnpkg.com/tldts/-/tldts-5.0.2.tgz#2372e16d510016deb7d1c3f365dbb4507ae6b1ba"
   integrity sha512-dzzanIZLvnklSztFETTjG+OKPt89cktNXMcXhaVZtfugIDTYtSHf+oFQwuWSfnFW41v6Lylcg7taUAu+euM0Ng==
 
+tldts@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/tldts/-/tldts-5.0.3.tgz#d1df5a03522b990b97b682fa5a357bf2047f2ec9"
+  integrity sha512-RsQLuUuzNCaf57BaOSp08XNQ+ufEfAd4H0ZQQnV4+RGhGo3i1Ym8P6mFDwD47OQrgxwdnRKGH0E3hpN2WVyr5A==
+
 tslib@^1.9.3:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
+
+tsmaz@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/tsmaz/-/tsmaz-1.2.1.tgz#6da2d42ac41c64f7f90ff48d9562d67feb74acf2"
+  integrity sha512-RobtKrzsPLP3CXb5TfN+wkuLIaeYsPmJg2LfohUUi4iHwf8RkMEUF5GX9zMw+YzirNK5JKjDNxoY2y/HBvG40w==
 
 typedarray@^0.0.6:
   version "0.0.6"
