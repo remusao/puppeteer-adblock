@@ -46,7 +46,7 @@ async function loadAdblocker() {
 
     if (redirect) {
       console.log("ABORT REDIRECT");
-      // NOTE - here we could use `request.respond` instead but this would
+      // NOTE: here we could use `request.respond` instead but this would
       // require `engine.match` to return more details than just `redirect`
       // (which is a data:url). Instead we would need `contentType` and `body`.
       request.abort("blockedbyclient");
@@ -58,5 +58,9 @@ async function loadAdblocker() {
     }
   });
 
-  await page.goto("https://www.nytimes.com/");
+  // NOTE: we could also perform cosmetic injection using `page.addScriptTag`
+  // and `page.addStyleTag`. Ideally all of this could be hidden behind a
+  // `PuppeteerEngine` abstraction (similar to `WebExtensionEngine`.)
+
+  await page.goto("https://www.mangareader.net/");
 })();
