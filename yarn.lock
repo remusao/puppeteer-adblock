@@ -242,11 +242,6 @@ string_decoder@~1.1.1:
   dependencies:
     safe-buffer "~5.1.0"
 
-tldts@^5.0.2:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/tldts/-/tldts-5.0.2.tgz#2372e16d510016deb7d1c3f365dbb4507ae6b1ba"
-  integrity sha512-dzzanIZLvnklSztFETTjG+OKPt89cktNXMcXhaVZtfugIDTYtSHf+oFQwuWSfnFW41v6Lylcg7taUAu+euM0Ng==
-
 tldts@^5.0.3:
   version "5.0.3"
   resolved "https://registry.yarnpkg.com/tldts/-/tldts-5.0.3.tgz#d1df5a03522b990b97b682fa5a357bf2047f2ec9"
